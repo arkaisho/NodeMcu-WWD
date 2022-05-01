@@ -1,11 +1,15 @@
+/* MH-RD CONFIGURATIONS */
+#define rainAnalog A0
+#define rainDigital D1
 
-void readRainSensor() {
+int readRainSensor() {
   int rainAnalogVal = analogRead(rainAnalog);
   int rainDigitalVal = digitalRead(rainDigital);
 
+  Serial.print("Chuva: ");
   Serial.print(rainAnalogVal);
   Serial.print("\t");
-  Serial.println(rainDigitalVal);
+  return (int)rainAnalogVal;
 }
 
 void setupRainSensorPinMode() {
