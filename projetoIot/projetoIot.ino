@@ -17,6 +17,19 @@ const char* proximity_sensor_topic = "arkaisho_iot_project_proximity";
 const char* temperature_sensor_topic = "arkaisho_iot_project_temperature";
 const char* umidity_sensor_topic = "arkaisho_iot_project_umidity";
 const char* rain_sensor_topic = "arkaisho_iot_project_rain";
+const char* temperature_sensor_failure_topic = "arkaisho_iot_project_temperature_failure";
+const char* umidity_sensor_failure_topic = "arkaisho_iot_project_umidity_failure";
+
+//PINOUT REFERENCE
+static const uint8_t D0   = 16;
+static const uint8_t D1   = 5;
+static const uint8_t D2   = 4;
+static const uint8_t D3   = 0;
+static const uint8_t D4   = 2;
+static const uint8_t D5   = 14;
+static const uint8_t D6   = 12;
+static const uint8_t D7   = 13;
+static const uint8_t D8   = 15;
 
 
 void setup() {
@@ -38,20 +51,25 @@ void loop() {
   //STARTS OTA WATCHING
   ArduinoOTA.handle();
   int proximity_value = readProximitySensor();
-  publishMessage(proximity_sensor_topic, String(proximity_value), true);
+  publishMessage(proximity_sensor_topic, String(proximity_value));
 
   int rain_value = readRainSensor();
-  publishMessage(rain_sensor_topic, String(rain_value), true);
+  publishMessage(rain_sensor_topic, String(rain_value));
 
   int temperature_value = readTemperatureSensor();
   if (temperature_value > 0) {
-    publishMessage(temperature_sensor_topic, String(temperature_value), true);
+    publishMessage(temperature_sensor_topic, String(temperature_value));
+  }else{
+    publishMessage(temperature_sensor_failure_topic, String(temperature_value));
   }
 
   int umidity_value = readUmiditySensor();
   if (umidity_value > 0 && umidity_value <= 100) {
-    publishMessage(umidity_sensor_topic, String(umidity_value), true);
+    publishMessage(umidity_sensor_topic, String(umidity_value));
+  }else{
+    publishMessage(umidity_sensor_failure_topic, String(umidity_value));
   }
+  
   Serial.println();
 
   delay(1000);

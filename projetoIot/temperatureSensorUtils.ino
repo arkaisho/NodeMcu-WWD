@@ -1,5 +1,5 @@
 /* DHT-11 CONFIGURATIONS */
-#define temperaturePin D1
+#define temperaturePin D2
 #define DHTTYPE DHT11
 
 DHT dht(temperaturePin, DHTTYPE);

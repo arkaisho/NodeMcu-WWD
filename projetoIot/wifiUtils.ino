@@ -1,6 +1,7 @@
 /* OTA AND WIFI CONFIGURATIONS */
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "internet";
+const char* password = "senha";
+
 
 void setupWifiConfigurations() {
   WiFi.mode(WIFI_STA);

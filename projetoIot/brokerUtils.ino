@@ -1,5 +1,5 @@
 /* HIVEMQ BROKER CONFIGURATIONS */
-const char* mqtt_server = "";
+const char* mqtt_server = "broker.emqx.io";
 const int mqtt_port = 1883;
 
 WiFiClient espClient;
@@ -20,12 +20,12 @@ void setupHiveMqClient() {
       Serial.print("Falha de conexão (estado do cliente = ");
       Serial.print(client.state());
       Serial.println(")");
-      delay(500);
+      delay(1000);
     }
   }
 }
 
-void publishMessage(const char* topic, String payload , boolean retained) {
+void publishMessage(const char* topic, String payload ) {
   client.publish(topic, payload.c_str());
   //  Serial.println("Message publised [" + String(topic) + "]: " + payload);
 }
