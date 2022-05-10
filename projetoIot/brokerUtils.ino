@@ -1,31 +1,40 @@
-/* HIVEMQ BROKER CONFIGURATIONS */
-const char* mqtt_server = "broker.emqx.io";
-const int mqtt_port = 1883;
+/* ADAFRUIT BROKER CONFIGURATIONS */
+#define AIO_SERVER      "io.adafruit.com"
+#define AIO_SERVERPORT  1883                   // use 8883 for SSL
+#define AIO_USERNAME    "arkaisho"
+#define AIO_KEY         "aio_GVqD43WbrfWNsMXuor0KoSZDzfqn"
 
-WiFiClient espClient;
-PubSubClient client(espClient);
+WiFiClient client;
+Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
 
-void setupHiveMqClient() {
-  client.setServer(mqtt_server, mqtt_port);
+// ADAFRUIT TOPICS
+Adafruit_MQTT_Publish distanceFeed = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/distance-feed");
 
-  String clientId = "ESP8266-joao-";
-  clientId += String(random(0xffff), HEX);
+void MQTT_connect() {
+  int8_t ret;
 
-  while (!client.connected()) {
-    Serial.println("Tentando se conectar com o servidor MQTT ...");
-    //    if (client.connect(clientId.c_str(), mqtt_username, mqtt_password)) {
-    if (client.connect(clientId.c_str())) {
-      Serial.println("Conectado !");
-    } else {
-      Serial.print("Falha de conexão (estado do cliente = ");
-      Serial.print(client.state());
-      Serial.println(")");
-      delay(1000);
-    }
+  // Stop if already connected.
+  if (mqtt.connected()) {
+    return;
   }
+
+  Serial.print("Connecting to MQTT... ");
+
+  uint8_t retries = 3;
+  while ((ret = mqtt.connect()) != 0) { // connect will return 0 for connected
+       Serial.println(mqtt.connectErrorString(ret));
+       Serial.println("Retrying MQTT connection in 5 seconds...");
+       mqtt.disconnect();
+       delay(5000);  // wait 5 seconds
+       retries--;
+       if (retries == 0) {
+         // basically die and wait for WDT to reset me
+         while (1);
+       }
+  }
+  Serial.println("MQTT Connected!");
 }
 
-void publishMessage(const char* topic, String payload ) {
-  client.publish(topic, payload.c_str());
-  //  Serial.println("Message publised [" + String(topic) + "]: " + payload);
+void publishDistance(int value){
+  distanceFeed.publish(value);
 }

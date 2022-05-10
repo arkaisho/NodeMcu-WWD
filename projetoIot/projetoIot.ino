@@ -5,20 +5,13 @@
 #include <ArduinoOTA.h>
 
 /* HIVEMQ BROKER LIBS */
-#include <WiFiClientSecure.h>
-#include <PubSubClient.h>
+#include "Adafruit_MQTT.h"
+#include "Adafruit_MQTT_Client.h"
 
 /* DHT-11 LIBS */
 #include <DHT.h>
 #include <DHT_U.h>
 
-// PREFIX -> arkaisho_iot_project_
-const char* proximity_sensor_topic = "arkaisho_iot_project_proximity";
-const char* temperature_sensor_topic = "arkaisho_iot_project_temperature";
-const char* umidity_sensor_topic = "arkaisho_iot_project_umidity";
-const char* rain_sensor_topic = "arkaisho_iot_project_rain";
-const char* temperature_sensor_failure_topic = "arkaisho_iot_project_temperature_failure";
-const char* umidity_sensor_failure_topic = "arkaisho_iot_project_umidity_failure";
 
 //PINOUT REFERENCE
 static const uint8_t D0   = 16;
@@ -31,11 +24,12 @@ static const uint8_t D6   = 12;
 static const uint8_t D7   = 13;
 static const uint8_t D8   = 15;
 
+//BUGFIX
+void MQTT_connect();
 
 void setup() {
   setupSerial();
   setupWifiConfigurations();
-  setupHiveMqClient();
   setupProxmitySensorPinMode();
   setupRainSensorPinMode();
   setupTemperatureUmiditySensorPinMode();
@@ -50,26 +44,28 @@ void setupSerial() {
 void loop() {
   //STARTS OTA WATCHING
   ArduinoOTA.handle();
+  MQTT_connect();
+
   int proximity_value = readProximitySensor();
-  publishMessage(proximity_sensor_topic, String(proximity_value));
+  publishDistance(proximity_value);
 
-  int rain_value = readRainSensor();
-  publishMessage(rain_sensor_topic, String(rain_value));
-
-  int temperature_value = readTemperatureSensor();
-  if (temperature_value > 0) {
-    publishMessage(temperature_sensor_topic, String(temperature_value));
-  }else{
-    publishMessage(temperature_sensor_failure_topic, String(temperature_value));
-  }
-
-  int umidity_value = readUmiditySensor();
-  if (umidity_value > 0 && umidity_value <= 100) {
-    publishMessage(umidity_sensor_topic, String(umidity_value));
-  }else{
-    publishMessage(umidity_sensor_failure_topic, String(umidity_value));
-  }
-  
+  //  int rain_value = readRainSensor();
+  //  publishMessage(rain_sensor_topic, String(rain_value));
+  //
+  //  int temperature_value = readTemperatureSensor();
+  //  if (temperature_value > 0) {
+  //    publishMessage(temperature_sensor_topic, String(temperature_value));
+  //  }else{
+  //    publishMessage(temperature_sensor_failure_topic, String(temperature_value));
+  //  }
+  //
+  //  int umidity_value = readUmiditySensor();
+  //  if (umidity_value > 0 && umidity_value <= 100) {
+  //    publishMessage(umidity_sensor_topic, String(umidity_value));
+  //  }else{
+  //    publishMessage(umidity_sensor_failure_topic, String(umidity_value));
+  //  }
+  //
   Serial.println();
 
   delay(1000);
