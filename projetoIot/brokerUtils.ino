@@ -1,8 +1,8 @@
 /* ADAFRUIT BROKER CONFIGURATIONS */
-#define AIO_SERVER      "io.adafruit.com"
-#define AIO_SERVERPORT  1883                   // use 8883 for SSL
-#define AIO_USERNAME    "arkaisho"
-#define AIO_KEY         "aio_GVqD43WbrfWNsMXuor0KoSZDzfqn"
+#define AIO_SERVER "io.adafruit.com"
+#define AIO_SERVERPORT 1883
+#define AIO_USERNAME "arkaisho"
+#define AIO_KEY "aio_GVqD43WbrfWNsMXuor0KoSZDzfqn"
 
 WiFiClient client;
 Adafruit_MQTT_Client mqtt(&client, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
@@ -19,18 +19,12 @@ void MQTT_connect() {
   }
 
   Serial.print("Connecting to MQTT... ");
-
-  uint8_t retries = 3;
+  
   while ((ret = mqtt.connect()) != 0) { // connect will return 0 for connected
        Serial.println(mqtt.connectErrorString(ret));
        Serial.println("Retrying MQTT connection in 5 seconds...");
        mqtt.disconnect();
-       delay(5000);  // wait 5 seconds
-       retries--;
-       if (retries == 0) {
-         // basically die and wait for WDT to reset me
-         while (1);
-       }
+       delay(5000);
   }
   Serial.println("MQTT Connected!");
 }

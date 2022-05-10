@@ -1,6 +1,6 @@
 /* OTA AND WIFI CONFIGURATIONS */
-const char* ssid = "internet";
-const char* password = "senha";
+const char* ssid = "h498-2h5d-23q2";
+const char* password = "besourinho";
 
 
 void setupWifiConfigurations() {
