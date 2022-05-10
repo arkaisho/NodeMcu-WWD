@@ -31,6 +31,8 @@ static const uint8_t D6   = 12;
 static const uint8_t D7   = 13;
 static const uint8_t D8   = 15;
 
+//TIME REFERENCE
+unsigned long previousMillis = 0;
 
 void setup() {
   setupSerial();
@@ -50,27 +52,31 @@ void setupSerial() {
 void loop() {
   //STARTS OTA WATCHING
   ArduinoOTA.handle();
-  int proximity_value = readProximitySensor();
-  publishMessage(proximity_sensor_topic, String(proximity_value));
 
-  int rain_value = readRainSensor();
-  publishMessage(rain_sensor_topic, String(rain_value));
+  unsigned long currentMillis = millis();
+  if (currentMillis - previousMillis > 2000 ) {
+    previousMillis = currentMillis;
+    int proximity_value = readProximitySensor();
+    publishMessage(proximity_sensor_topic, String(proximity_value));
 
-  int temperature_value = readTemperatureSensor();
-  if (temperature_value > 0) {
-    publishMessage(temperature_sensor_topic, String(temperature_value));
-  }else{
-    publishMessage(temperature_sensor_failure_topic, String(temperature_value));
+    int rain_value = readRainSensor();
+    publishMessage(rain_sensor_topic, String(rain_value));
+
+    int temperature_value = readTemperatureSensor();
+    if (temperature_value > 0) {
+      publishMessage(temperature_sensor_topic, String(temperature_value));
+    } else {
+      publishMessage(temperature_sensor_failure_topic, String(temperature_value));
+    }
+
+    int umidity_value = readUmiditySensor();
+    if (umidity_value > 0 && umidity_value <= 100) {
+      publishMessage(umidity_sensor_topic, String(umidity_value));
+    } else {
+      publishMessage(umidity_sensor_failure_topic, String(umidity_value));
+    }
+
+    Serial.println();
   }
-
-  int umidity_value = readUmiditySensor();
-  if (umidity_value > 0 && umidity_value <= 100) {
-    publishMessage(umidity_sensor_topic, String(umidity_value));
-  }else{
-    publishMessage(umidity_sensor_failure_topic, String(umidity_value));
-  }
-  
-  Serial.println();
-
-  delay(1000);
+  delay(100);
 }
