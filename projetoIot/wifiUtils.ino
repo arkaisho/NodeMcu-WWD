@@ -1,5 +1,5 @@
 /* OTA AND WIFI CONFIGURATIONS */
-const char* ssid = "internet";
+const char* ssid = "interner";
 const char* password = "senha";
 
 

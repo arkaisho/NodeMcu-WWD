@@ -54,7 +54,7 @@ void loop() {
   ArduinoOTA.handle();
 
   unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis > 2000 ) {
+  if (currentMillis - previousMillis > 8000 ) {
     previousMillis = currentMillis;
     int proximity_value = readProximitySensor();
     publishMessage(proximity_sensor_topic, String(proximity_value));
